@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mood Journal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Quicksand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script defer src="{{ url_for('static', filename='sky.js') }}"></script>
+</head>
+<body>
+    <div class="sky">
+        <div id="cloud-container"></div>
+
+        {% if not username %}
+            <!-- Show form if no name yet -->
+            <form method="POST" class="name-form">
+                <input type="text" name="username" placeholder="Enter your name" required />
+                <button type="submit">Start</button>
+            </form>
+        {% else %}
+            <!-- Show greeting and journal if name is set -->
+            <div class="greeting">Welcome, {{ username }} 🌸</div>
+
+            <img src="{{ url_for('static', filename='assets/journal.png') }}" alt="Open Journal"
+                 class="floating-journal" />
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,129 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: linear-gradient(to top, #a0c4ff, #ffffff);
+    height: 100vh;
+    font-family: sans-serif;
+}
+
+/* Sky background */
+.sky {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, #cdeffd, #f0faff);
+    overflow: hidden;
+}
+
+/* Clouds */
+#cloud-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.cloud-img {
+    position: absolute;
+    top: 0;
+    width: 100px;
+    opacity: 0.6;
+    filter: blur(2px);
+    animation-name: drift;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
+    pointer-events: none;
+    z-index: 1;
+
+    transform: translateX(-150px); /* start offscreen to the left */
+}
+
+body.paused .cloud-img {
+  animation-play-state: paused !important;
+}
+
+@keyframes drift {
+    from {
+        transform: translateX(-150px);
+    }
+    to {
+        transform: translateX(120vw);
+    }
+}
+
+/* Floating journal */
+.floating-journal {
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%) scale(1);
+    width: 120px;
+    cursor: pointer;
+    animation: zoomy 2s ease-in-out infinite alternate;
+}
+
+@keyframes zoomy {
+    from { transform: translateX(-50%) scale(1); }
+    to   { transform: translateX(-50%) scale(1.08); }
+}
+
+.name-form {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.name-form input {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.name-form button {
+    padding: 10px 16px;
+    background-color: #ffd6e0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.greeting {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.3rem;
+    color: #333;
+    z-index: 10;
+    font-family: 'Baloo 2', sans-serif;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Mouse petals */
+.petal {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    pointer-events: none;
+    z-index: 10;
+    animation: floatPetal 1.5s ease-out forwards;
+}
+
+@keyframes floatPetal {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--x), var(--y)) rotate(var(--r));
+    }
+}
