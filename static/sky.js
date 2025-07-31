@@ -1,5 +1,21 @@
 const cloudContainer = document.getElementById("cloud-container");
 
+let screenWidth = window.innerWidth;
+let screenHeight = window.innerHeight;
+
+// Set spawn frequency (seconds to wait before spawning new cloud)
+function getSpawnOffset() {
+    if (screenWidth > 1400) return 3500; // faster on large screens
+    if (screenWidth > 800) return 4500;
+    return 5500; // slower on small screens
+}
+
+// Set cloud travel time (seconds to cross screen)
+function getCloudDuration() {
+    if (screenWidth > 800) return Math.random() * 20 + 90; // faster on large screens
+    return Math.random() * 20 + 120; // slower on small screen
+}
+
 function createCloud(initial = false) {
     const cloud = document.createElement("img");
     cloud.src = "/static/assets/cloud.png";
@@ -9,11 +25,17 @@ function createCloud(initial = false) {
     cloud.style.top = `${Math.random() * 30 + 5}%`;
 
     // Random size
-    const scale = Math.random() * 0.5 + 0.75;
-    cloud.style.transform = `scale(${scale})`;
+    let scale
+    if (screenHeight > 800) {
+        scale = 1.25;
+    } else {
+        scale = 1.0;
+    }
+    cloud.style.setProperty('--scale', scale);
+    cloud.style.setProperty('--start-x', '-150px');
 
-    // Random animation duration (30–50s)
-    const duration = Math.random() * 20 + 45;
+    // Get animation duration based on screen size
+    const duration = getCloudDuration();
     cloud.style.animationDuration = `${duration}s`;
 
     if (initial) {
@@ -31,8 +53,11 @@ function createCloud(initial = false) {
 }
 
 // 🌤️ Generate some clouds on screen immediately
-for (let i = 0; i < 8; i++) {
+function generateInitialClouds() {
+    numInitClouds = screenWidth > 1400 ? 12 : screenWidth > 800 ? 9 : 6; // more clouds on larger screens
+    for (let i = 0; i < numInitClouds; i++) {
     createCloud(true);  // pass "true" to start them across the screen
+    }
 }
 
 // 🌀 Continue adding new clouds from the left
@@ -43,7 +68,7 @@ function startCloudLoop() {
     if (!cloudLoopRunning || cloudLoopScheduled) return;
 
     cloudLoopScheduled = true;
-    const nextDelay = Math.random() * 2000 + 4000;
+    const nextDelay = Math.random() * 2000 + getSpawnOffset(); // random delay based on spawnOffset
 
     setTimeout(() => {
         cloudLoopScheduled = false;
@@ -99,4 +124,11 @@ document.addEventListener("click", (e) => {
     }
 });
 
+window.addEventListener("resize", () => {
+    screenWidth = window.innerWidth;
+    screenHeight = window.innerHeight;
+});
+
+// Start the initial cloud loop
+generateInitialClouds();
 startCloudLoop();

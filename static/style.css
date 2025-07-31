@@ -38,7 +38,7 @@ body, html {
     pointer-events: none;
     z-index: 1;
 
-    transform: translateX(-150px); /* start offscreen to the left */
+    /*transform: translateX(-150px); /* start offscreen to the left */
 }
 
 body.paused .cloud-img {
@@ -47,10 +47,10 @@ body.paused .cloud-img {
 
 @keyframes drift {
     from {
-        transform: translateX(-150px);
+        transform: translateX(var(--start-x, -150px)) scale(var(--scale, 1));
     }
     to {
-        transform: translateX(120vw);
+        transform: translateX(120vw) scale(var(--scale, 1));
     }
 }
 
