@@ -21,8 +21,10 @@
             <!-- Show greeting and journal if name is set -->
             <div class="greeting">Welcome, {{ username }} 🌸</div>
 
-            <img src="{{ url_for('static', filename='assets/journal.png') }}" alt="Open Journal"
-                 class="floating-journal" />
+            <a href="{{ url_for('journal') }}">
+                <img src="/static/assets/journal.png" class="floating-journal" alt = "Open Journal" />
+            </a>
+
         {% endif %}
     </div>
 </body>

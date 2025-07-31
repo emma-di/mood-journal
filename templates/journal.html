@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Journal</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #fef9f4;
+            padding: 40px;
+            color: #333;
+        }
+        h1 {
+            color: #d77a61;
+        }
+        .back-link {
+            margin-top: 20px;
+            display: inline-block;
+            color: #555;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Journal</h1>
+    <p>Welcome to your journal page. You can write or display entries here later!</p>
+    <a class="back-link" href="{{ url_for('landing') }}">← Back to home</a>
+</body>
+</html>

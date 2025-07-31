@@ -10,5 +10,9 @@ def landing():
     username = session.get("username")
     return render_template("landing.html", username=username)
 
+@app.route("/journal")
+def journal():
+    return render_template("journal.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
