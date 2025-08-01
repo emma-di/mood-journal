@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script defer src="{{ url_for('static', filename='sky.js') }}"></script>
 </head>
+
 <body>
     <div class="sky">
         <div id="cloud-container"></div>
@@ -27,5 +28,47 @@
 
         {% endif %}
     </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+
+            // Fetch sunrise/sunset times
+            const res = await fetch(`https://api.sunrisesunset.io/json?lat=${lat}&lng=${lon}`);
+            const data = await res.json();
+            const now = new Date();
+            const localTime = now.getHours() + now.getMinutes() / 60;
+
+            const parseTime = (str) => {
+                const [hourMin, period] = str.split(' ');
+                let [h, m] = hourMin.split(':').map(Number);
+                if (period === 'PM' && h < 12) h += 12;
+                if (period === 'AM' && h === 12) h = 0;
+                return h + m / 60;
+            };
+
+            const sunrise = parseTime(data.results.sunrise);
+            const sunset = parseTime(data.results.sunset);
+
+            const body = document.body;
+            if (localTime < sunrise) {
+                body.classList.add("bg-night");
+            } else if (localTime < sunrise + 1.5) {
+                body.classList.add("bg-dawn");
+            } else if (localTime < sunset - 1.5) {
+                body.classList.add("bg-day");
+            } else if (localTime < sunset) {
+                body.classList.add("bg-dusk");
+            } else {
+                body.classList.add("bg-night");
+            }
+        }, () => {
+            // fallback if geolocation fails
+            document.body.classList.add("bg-day");
+        });
+    });
+    </script>
 </body>
 </html>

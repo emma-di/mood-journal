@@ -52,7 +52,7 @@ function createCloud(initial = false) {
     }, duration * 1000);
 }
 
-// 🌤️ Generate some clouds on screen immediately
+// Generate some clouds on screen immediately
 function generateInitialClouds() {
     numInitClouds = screenWidth > 1400 ? 12 : screenWidth > 800 ? 9 : 6; // more clouds on larger screens
     for (let i = 0; i < numInitClouds; i++) {
@@ -60,7 +60,7 @@ function generateInitialClouds() {
     }
 }
 
-// 🌀 Continue adding new clouds from the left
+// Continue adding new clouds from the left
 let cloudLoopRunning = true;
 let cloudLoopScheduled = false;
 
@@ -78,7 +78,6 @@ function startCloudLoop() {
         }
     }, nextDelay);
 }
-
 
 document.addEventListener("visibilitychange", () => {
     const visible = document.visibilityState === "visible";
