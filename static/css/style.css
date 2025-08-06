@@ -7,6 +7,32 @@ body, html {
     font-family: sans-serif;
 }
 
+body.bg-day {
+    color: #222; /* dark font for light background */
+}
+
+body.bg-dawn {
+    color: #5a3c2e; /* soft brownish color */
+}
+
+body.bg-dusk {
+    color: #fff1e0; /* pale cream or light peach */
+}
+
+body.bg-night {
+    color: #e0e0ff; /* soft light blue/gray for dark bg */
+}
+
+.footer {
+    position: absolute;
+    bottom: 10px; /* distance from bottom of screen */
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: max-content; /* or set a fixed width if needed */
+    font-size: 0.9rem;
+}
+
 /* Sky background depending on time of day */
 .bg-day {
     background: linear-gradient(to top, #a0c4ff, #ffffff);
@@ -110,7 +136,7 @@ body.paused .cloud-img {
     left: 50%;
     transform: translateX(-50%);
     font-size: 1.3rem;
-    color: #333;
+    color: inherit;
     z-index: 10;
     font-family: 'Baloo 2', sans-serif;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);

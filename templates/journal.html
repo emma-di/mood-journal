@@ -3,27 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>My Journal</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            background: #fef9f4;
-            padding: 40px;
-            color: #333;
-        }
-        h1 {
-            color: #d77a61;
-        }
-        .back-link {
-            margin-top: 20px;
-            display: inline-block;
-            color: #555;
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/journal.css') }}">
+    <script defer src="{{ url_for('static', filename='js/journal.js') }}"></script>
 </head>
 <body>
+    <div class="container">
     <h1>My Journal</h1>
     <p>Welcome to your journal page. You can write or display entries here later!</p>
     <a class="back-link" href="{{ url_for('landing') }}">← Back to home</a>
+
+    <div class="petal-area">
+        {% for entry in entries %}
+        <div class="petal collapsible"
+            style="left: {{ (loop.index0 * 15) % 90 }}%; top: {{ loop.index0 * 80 }}px; animation-delay: {{ loop.index0 * 0.5 }}s;">
+            <div class="entry-date">{{ entry.date }}</div>
+            <div class="entry-full hidden">{{ entry.text }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <form method="POST" class="entry-form">
+        <textarea name="entry" placeholder="What's on your mind?"></textarea>
+        <button type="submit">Add Entry</button>
+    </form>
+    </div>
 </body>
 </html>
