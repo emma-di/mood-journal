@@ -3,29 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <title>My Journal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/journal.css') }}">
     <script defer src="{{ url_for('static', filename='js/journal.js') }}"></script>
 </head>
 <body>
-    <div class="container">
-    <h1>My Journal</h1>
-    <p>Welcome to your journal page. You can write or display entries here later!</p>
-    <a class="back-link" href="{{ url_for('landing') }}">← Back to home</a>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="journal-header">
+            <div class="header-content">
+                <h1>My Journal</h1>
+                <p class="subtitle">A safe space for your thoughts and feelings</p>
+                <a class="back-link" href="{{ url_for('landing') }}">← Back to home</a>
+            </div>
+        </header>
 
-    <div class="petal-area">
-        {% for entry in entries %}
-        <div class="petal collapsible"
-            style="left: {{ (loop.index0 * 15) % 90 }}%; top: {{ loop.index0 * 80 }}px; animation-delay: {{ loop.index0 * 0.5 }}s;">
-            <div class="entry-date">{{ entry.date }}</div>
-            <div class="entry-full hidden">{{ entry.text }}</div>
+        <!-- Conversations Grid -->
+        <div class="conversations-container">
+            <div class="petal-garden">
+                {% for conversation in conversations %}
+                <div class="conversation-petal" 
+                     data-conversation-id="{{ conversation.id }}"
+                     style="--delay: {{ loop.index0 * 0.1 }}s; --x-offset: {{ (loop.index0 * 23) % 80 }}%; --y-offset: {{ (loop.index0 * 40) % 60 }}%;">
+                    <div class="petal-date">{{ conversation.created_at }}</div>
+                    <div class="petal-preview">{{ conversation.title }}</div>
+                    <div class="message-count">{{ conversation.messages|length // 2 }} exchanges</div>
+                </div>
+                {% endfor %}
+                
+                <!-- New conversation petal -->
+                <div class="conversation-petal new-conversation" id="new-conversation-btn">
+                    <div class="plus-icon">+</div>
+                    <div class="petal-preview">Start new conversation</div>
+                </div>
+            </div>
         </div>
-        {% endfor %}
+
+        <!-- Chat Modal -->
+        <div id="chat-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="conversation-title">Journal Session</h2>
+                    <div class="modal-controls">
+                        <button id="minimize-btn" class="control-btn">−</button>
+                        <button id="close-modal-btn" class="control-btn">×</button>
+                    </div>
+                </div>
+                
+                <div class="chat-container">
+                    <div id="chat-messages" class="chat-messages"></div>
+                    
+                    <div class="chat-input-container">
+                        <div class="input-wrapper">
+                            <textarea id="message-input" placeholder="How are you feeling today? Share what's on your mind..." rows="3"></textarea>
+                            <button id="send-btn" class="send-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22,2 15,22 11,13 2,9"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overlay -->
+        <div id="modal-overlay" class="modal-overlay hidden"></div>
     </div>
 
-    <form method="POST" class="entry-form">
-        <textarea name="entry" placeholder="What's on your mind?"></textarea>
-        <button type="submit">Add Entry</button>
-    </form>
-    </div>
+    <script>
+        // Pass conversations data to JavaScript
+        window.conversationsData = {{ (conversations or [])|tojson|safe }};
+    </script>
 </body>
 </html>
