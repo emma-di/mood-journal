@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Mood Journal</title>
+    <title>My Journal</title>
+    <meta name="description" content="Personal AI-powered mood journal with conversational interface">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Quicksand&display=swap" rel="stylesheet">
    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -22,11 +24,36 @@
             </form>
         {% else %}
             <!-- Show greeting and journal if name is set -->
-            <div class="greeting">Welcome, {{ username }} 🌸</div>
+            <div class="greeting">Welcome, {{ username }} <span class="greeting-emoji">🌸</span></div>
 
-            <a href="{{ url_for('journal') }}">
-                <img src="/static/assets/journal.png" class="floating-journal" alt = "Open Journal" />
-            </a>
+            <!-- Journal Button (more prominent) -->
+            <div class="journal-section">
+                <a href="{{ url_for('journal') }}">
+                    <img src="/static/assets/journal.png" class="floating-journal" alt="Open Journal" />
+                </a>
+            </div>
+
+            <!-- Mini Gratitude Jar Widget -->
+            <div class="gratitude-widget">
+                <div class="widget-header">
+                    <span class="widget-title">Daily Gratitude</span>
+                    <span class="widget-subtitle">What are you thankful for?</span>
+                </div>
+                <div class="widget-content">
+                    <div class="gratitude-jar" id="gratitude-jar">
+                        <div class="jar-lid"></div>
+                        <div class="jar-body">
+                            <div class="gratitude-notes" id="gratitude-notes"></div>
+                            <div class="jar-count" id="jar-count">0 notes</div>
+                        </div>
+                    </div>
+                    <div class="gratitude-input-container">
+                        <input type="text" id="gratitude-input" placeholder="Something I'm grateful for..." maxlength="40">
+                        <button id="add-gratitude" type="button">+</button>
+                    </div>
+                    <div class="widget-tip">Tap the jar to see past notes</div>
+                </div>
+            </div>
 
         {% endif %}
     </div>
@@ -70,6 +97,112 @@
             // fallback if geolocation fails
             document.body.classList.add("bg-day");
         });
+
+        // Mini Gratitude Jar
+        const gratitudeJar = document.getElementById('gratitude-jar');
+        const gratitudeInput = document.getElementById('gratitude-input');
+        const addGratitudeBtn = document.getElementById('add-gratitude');
+        const jarCount = document.getElementById('jar-count');
+        const gratitudeNotes = document.getElementById('gratitude-notes');
+        
+        if (gratitudeJar) {
+            let gratitudeList = JSON.parse(localStorage.getItem('gratitudeNotes') || '[]');
+            updateJarCount();
+            
+            // Add gratitude note
+            function addGratitude() {
+                const note = gratitudeInput.value.trim();
+                if (note) {
+                    const gratitudeEntry = {
+                        text: note,
+                        date: new Date().toLocaleDateString(),
+                        id: Date.now()
+                    };
+                    
+                    gratitudeList.push(gratitudeEntry);
+                    localStorage.setItem('gratitudeNotes', JSON.stringify(gratitudeList));
+                    
+                    // Create floating animation
+                    createFloatingNote(note);
+                    
+                    gratitudeInput.value = '';
+                    updateJarCount();
+                    
+                    // Add sparkle effect to jar
+                    gratitudeJar.classList.add('sparkle');
+                    setTimeout(() => gratitudeJar.classList.remove('sparkle'), 1000);
+                }
+            }
+            
+            // Create floating note animation
+            function createFloatingNote(text) {
+                const floatingNote = document.createElement('div');
+                floatingNote.className = 'floating-note';
+                floatingNote.textContent = text;
+                document.body.appendChild(floatingNote);
+                
+                // Position near the jar
+                const jarRect = gratitudeJar.getBoundingClientRect();
+                floatingNote.style.left = (jarRect.left + 20) + 'px';
+                floatingNote.style.top = (jarRect.top - 20) + 'px';
+                
+                setTimeout(() => floatingNote.remove(), 3000);
+            }
+            
+            // Show random gratitude note
+            function showRandomNote() {
+                if (gratitudeList.length === 0) {
+                    alert('Add some gratitude notes first!');
+                    return;
+                }
+                
+                // Ensure truly random selection
+                const randomIndex = Math.floor(Math.random() * gratitudeList.length);
+                const randomNote = gratitudeList[randomIndex];
+                
+                // Create popup
+                const popup = document.createElement('div');
+                popup.className = 'gratitude-popup';
+                popup.innerHTML = `
+                    <div class="popup-content">
+                        <h3>You were grateful for:</h3>
+                        <p>"${randomNote.text}"</p>
+                        <small>Added on ${randomNote.date}</small>
+                        <button onclick="this.parentElement.parentElement.remove()">Close</button>
+                    </div>
+                `;
+                document.body.appendChild(popup);
+                
+                setTimeout(() => {
+                    if (popup.parentElement) popup.remove();
+                }, 5000);
+            }
+            
+            function updateJarCount() {
+                const count = gratitudeList.length;
+                jarCount.textContent = count === 1 ? '1 note' : `${count} notes`;
+                
+                // Add visual notes to jar
+                gratitudeNotes.innerHTML = '';
+                const visibleNotes = Math.min(count, 8);
+                for (let i = 0; i < visibleNotes; i++) {
+                    const noteElement = document.createElement('div');
+                    noteElement.className = 'jar-note';
+                    noteElement.style.animationDelay = (i * 0.1) + 's';
+                    gratitudeNotes.appendChild(noteElement);
+                }
+            }
+            
+            // Event listeners
+            addGratitudeBtn.addEventListener('click', addGratitude);
+            gratitudeInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addGratitude();
+            });
+            gratitudeJar.addEventListener('click', showRandomNote);
+            
+            // Initialize with existing notes
+            updateJarCount();
+        }
     });
     </script>
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>My Journal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Baloo+2:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/journal.css') }}">
     <script defer src="{{ url_for('static', filename='js/journal.js') }}"></script>
 </head>
@@ -30,13 +30,19 @@
                     <div class="message-count">{{ conversation.messages|length // 2 }} exchanges</div>
                 </div>
                 {% endfor %}
-                
-                <!-- New conversation petal -->
-                <div class="conversation-petal new-conversation" id="new-conversation-btn">
-                    <div class="plus-icon">+</div>
-                    <div class="petal-preview">Start new conversation</div>
-                </div>
             </div>
+        </div>
+
+        <!-- Fixed New Conversation Button -->
+        <div class="new-conversation-fab" id="new-conversation-btn">
+            <div class="fab-icon">+</div>
+            <span class="fab-text">New Entry</span>
+        </div>
+
+        <!-- Help Button -->
+        <div class="help-fab" id="help-btn">
+            <div class="fab-icon">?</div>
+            <span class="fab-text">Help</span>
         </div>
 
         <!-- Chat Modal -->
@@ -45,6 +51,7 @@
                 <div class="modal-header">
                     <h2 id="conversation-title">Journal Session</h2>
                     <div class="modal-controls">
+                        <button id="save-close-btn" class="control-btn save-btn">Save & Close</button>
                         <button id="minimize-btn" class="control-btn">−</button>
                         <button id="close-modal-btn" class="control-btn">×</button>
                     </div>
@@ -70,11 +77,88 @@
 
         <!-- Overlay -->
         <div id="modal-overlay" class="modal-overlay hidden"></div>
+
+        <!-- Help Modal -->
+        <div id="help-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>About My Journal</h2>
+                    <div class="modal-controls">
+                        <button id="close-help-btn" class="control-btn">×</button>
+                    </div>
+                </div>
+                <div class="help-content">
+                    <h3>How it works:</h3>
+                    <ul>
+                        <li><strong>Start a conversation:</strong> Click the pink + button to begin a new journal entry</li>
+                        <li><strong>Share your thoughts:</strong> Type whatever is on your mind - feelings, experiences, concerns</li>
+                        <li><strong>Get support:</strong> The AI companion will listen and respond thoughtfully</li>
+                        <li><strong>Revisit entries:</strong> Click any petal to continue previous conversations</li>
+                    </ul>
+                    
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>Sessions are automatically saved and titled based on your first message</li>
+                        <li>The background changes based on your local time of day</li>
+                        <li>All conversations are private and stored locally</li>
+                        <li>Use "Save & Close" to end a session and return to the garden</li>
+                    </ul>
+                    
+                    <p><em>This is a personal journaling tool powered by AI. It's designed to be a supportive space for reflection, not a replacement for professional mental health care.</em></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Made with ❤️ by Emma</p>
     </div>
 
     <script>
-        // Pass conversations data to JavaScript
+        // Pass conversations data and username to JavaScript
         window.conversationsData = {{ (conversations or [])|tojson|safe }};
+        window.currentUsername = "{{ session.get('username', 'there') }}";
+        
+        // Time-based background (same as landing page)
+        document.addEventListener("DOMContentLoaded", () => {
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+
+                // Fetch sunrise/sunset times
+                const res = await fetch(`https://api.sunrisesunset.io/json?lat=${lat}&lng=${lon}`);
+                const data = await res.json();
+                const now = new Date();
+                const localTime = now.getHours() + now.getMinutes() / 60;
+
+                const parseTime = (str) => {
+                    const [hourMin, period] = str.split(' ');
+                    let [h, m] = hourMin.split(':').map(Number);
+                    if (period === 'PM' && h < 12) h += 12;
+                    if (period === 'AM' && h === 12) h = 0;
+                    return h + m / 60;
+                };
+
+                const sunrise = parseTime(data.results.sunrise);
+                const sunset = parseTime(data.results.sunset);
+
+                const body = document.body;
+                if (localTime < sunrise) {
+                    body.classList.add("bg-night");
+                } else if (localTime < sunrise + 1.5) {
+                    body.classList.add("bg-dawn");
+                } else if (localTime < sunset - 1.5) {
+                    body.classList.add("bg-day");
+                } else if (localTime < sunset) {
+                    body.classList.add("bg-dusk");
+                } else {
+                    body.classList.add("bg-night");
+                }
+            }, () => {
+                // fallback if geolocation fails
+                document.body.classList.add("bg-day");
+            });
+        });
     </script>
 </body>
 </html>

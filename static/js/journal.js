@@ -4,8 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('chat-modal');
     const overlay = document.getElementById('modal-overlay');
     const closeBtn = document.getElementById('close-modal-btn');
+    const saveCloseBtn = document.getElementById('save-close-btn');
     const minimizeBtn = document.getElementById('minimize-btn');
     const newConversationBtn = document.getElementById('new-conversation-btn');
+    const helpBtn = document.getElementById('help-btn');
+    const helpModal = document.getElementById('help-modal');
+    const closeHelpBtn = document.getElementById('close-help-btn');
     const sendBtn = document.getElementById('send-btn');
     const messageInput = document.getElementById('message-input');
     const chatMessages = document.getElementById('chat-messages');
@@ -17,6 +21,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Open modal for new conversation
     newConversationBtn.addEventListener('click', () => {
         openChat();
+    });
+
+    // Open help modal
+    helpBtn.addEventListener('click', () => {
+        helpModal.classList.remove('hidden');
+        overlay.classList.remove('hidden');
+        setTimeout(() => {
+            helpModal.classList.add('show');
+            overlay.classList.add('show');
+        }, 10);
+    });
+
+    // Close help modal
+    closeHelpBtn.addEventListener('click', () => {
+        helpModal.classList.remove('show');
+        overlay.classList.remove('show');
+        setTimeout(() => {
+            helpModal.classList.add('hidden');
+            overlay.classList.add('hidden');
+        }, 300);
     });
 
     // Open modal for existing conversation
@@ -40,6 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     closeBtn.addEventListener('click', closeModal);
+    saveCloseBtn.addEventListener('click', () => {
+        // Save and close - refresh page to show updated petal
+        if (currentConversationId) {
+            window.location.reload();
+        } else {
+            closeModal();
+        }
+    });
     overlay.addEventListener('click', closeModal);
 
     // Minimize/restore modal
@@ -60,8 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const message = messageInput.value.trim();
         if (!message) return;
 
-        // Disable input while sending
+        // Disable input and show loading state
         sendBtn.disabled = true;
+        sendBtn.classList.add('loading');
         messageInput.disabled = true;
 
         // Add user message to chat
@@ -86,10 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (response.ok) {
-                // Update conversation ID if it's a new conversation
                 if (!currentConversationId) {
                     currentConversationId = data.conversation_id;
                     conversationTitle.textContent = `Journal Session ${data.conversation_id}`;
+                    
+                    // Note: Removed auto-refresh to prevent unwanted modal closing
                 }
 
                 // Remove typing indicator and add AI response
@@ -97,15 +131,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 addMessage('assistant', data.response);
             } else {
                 hideTypingIndicator();
-                addMessage('assistant', `Sorry, there was an error: ${data.error}`);
+                addMessage('assistant', `I'm having trouble right now: ${data.error}`);
             }
         } catch (error) {
             hideTypingIndicator();
-            addMessage('assistant', 'Sorry, I\'m having trouble connecting right now. Please try again.');
+            addMessage('assistant', 'I\'m having trouble connecting right now. Please check your internet and try again in a moment.');
         }
 
-        // Re-enable input
+        // Re-enable input and remove loading state
         sendBtn.disabled = false;
+        sendBtn.classList.remove('loading');
         messageInput.disabled = false;
         messageInput.focus();
     }
@@ -154,9 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 conversationTitle.textContent = 'Error Loading Conversation';
             }
         } else {
-            // New conversation
+            // New conversation - use the current username
+            const username = window.currentUsername || 'there';
+            
             conversationTitle.textContent = 'New Journal Session';
-            addMessage('assistant', 'Hello! I\'m here to listen and support you. How are you feeling today? Feel free to share whatever is on your mind.', false);
+            addMessage('assistant', `Hello ${username}! I'm here to listen and support you. How are you feeling today? Feel free to share whatever is on your mind.`, false);
         }
 
         // Show modal

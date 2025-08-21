@@ -25,12 +25,20 @@ body.bg-night {
 
 .footer {
     position: absolute;
-    bottom: 10px; /* distance from bottom of screen */
+    bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
-    width: max-content; /* or set a fixed width if needed */
+    width: max-content;
     font-size: 0.9rem;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 400;
+    opacity: 0.7;
+    color: inherit; /* This will inherit the body color based on time of day */
+}
+
+.footer p {
+    margin: 0;
 }
 
 /* Sky background depending on time of day */
@@ -132,7 +140,7 @@ body.paused .cloud-img {
 
 .greeting {
     position: absolute;
-    top: 15%;
+    top: 10%;
     left: 50%;
     transform: translateX(-50%);
     font-size: 1.3rem;
@@ -140,6 +148,320 @@ body.paused .cloud-img {
     z-index: 10;
     font-family: 'Baloo 2', sans-serif;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.greeting-emoji {
+    margin-left: 8px;
+    display: inline-block;
+}
+
+/* Journal Section - Centered */
+.journal-section {
+    position: absolute;
+    top: 50%;
+    left: 45%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+}
+
+.journal-text {
+    font-size: 1rem;
+    color: inherit;
+    opacity: 0.9;
+    margin-bottom: 60px;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 500;
+}
+
+.floating-journal {
+    width: 120px;
+    cursor: pointer;
+    animation: zoomy 2s ease-in-out infinite alternate;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+@keyframes zoomy {
+    from { transform: scale(1); }
+    to   { transform: scale(1.08); }
+}
+
+/* Gratitude Widget */
+.gratitude-widget {
+    position: absolute;
+    bottom: 120px;
+    right: 30px;
+    width: 280px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    z-index: 5;
+    overflow: hidden;
+}
+
+.widget-header {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.widget-title {
+    display: block;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: inherit;
+    margin-bottom: 2px;
+}
+
+.widget-subtitle {
+    display: block;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 0.8rem;
+    color: inherit;
+    opacity: 0.7;
+}
+
+.widget-content {
+    padding: 20px;
+    text-align: center;
+}
+
+.gratitude-jar {
+    position: relative;
+    width: 80px;
+    height: 100px;
+    margin: 0 auto 15px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.gratitude-jar:hover {
+    transform: scale(1.05);
+}
+
+.gratitude-jar.sparkle {
+    animation: sparkleJar 1s ease-out;
+}
+
+@keyframes sparkleJar {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.1) rotate(2deg); }
+    75% { transform: scale(1.1) rotate(-2deg); }
+}
+
+.jar-lid {
+    width: 65px;
+    height: 15px;
+    background: linear-gradient(135deg, #d4af37 0%, #ffed4a 100%);
+    border-radius: 50px;
+    margin: 0 auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 2;
+}
+
+.jar-body {
+    width: 60px;
+    height: 85px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.3) 100%);
+    border-radius: 0 0 30px 30px;
+    margin: -3px auto 0;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+}
+
+.gratitude-notes {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+    height: 50px;
+}
+
+.jar-note {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7);
+    background-size: 500% 500%;
+    border-radius: 50%;
+    animation: floatNote 3s ease-in-out infinite, colorShift 5s ease-in-out infinite;
+}
+
+.jar-note:nth-child(odd) {
+    left: 25%;
+    animation-delay: 0.5s;
+}
+
+.jar-note:nth-child(even) {
+    right: 25%;
+    animation-delay: 1s;
+}
+
+@keyframes floatNote {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes colorShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.jar-count {
+    position: absolute;
+    bottom: 3px;
+    width: 100%;
+    font-size: 0.55rem;
+    color: inherit;
+    font-family: 'Baloo 2', sans-serif;
+    opacity: 0.8;
+}
+
+.gratitude-input-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+#gratitude-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 0.8rem;
+    outline: none;
+    color: inherit;
+}
+
+#gratitude-input::placeholder {
+    color: inherit;
+    opacity: 0.6;
+}
+
+#gratitude-input:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.3);
+}
+
+#add-gratitude {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#add-gratitude:hover {
+    transform: scale(1.1);
+}
+
+.widget-tip {
+    font-size: 0.7rem;
+    color: inherit;
+    opacity: 0.6;
+    font-family: 'Baloo 2', sans-serif;
+    font-style: italic;
+}
+
+/* Floating Note Animation */
+.floating-note {
+    position: fixed;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-family: 'Baloo 2', sans-serif;
+    z-index: 1000;
+    pointer-events: none;
+    animation: floatUp 3s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+}
+
+/* Gratitude Popup */
+.gratitude-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.popup-content {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 300px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.popup-content h3 {
+    margin: 0 0 15px 0;
+    color: #4a5568;
+    font-family: 'Baloo 2', sans-serif;
+}
+
+.popup-content p {
+    margin: 15px 0;
+    font-size: 1.1rem;
+    color: #2d3748;
+    font-style: italic;
+}
+
+.popup-content small {
+    color: #718096;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.popup-content button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-family: 'Baloo 2', sans-serif;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* Mouse petals */
@@ -160,5 +482,88 @@ body.paused .cloud-img {
     100% {
         opacity: 0;
         transform: translate(var(--x), var(--y)) rotate(var(--r));
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.6rem;
+        top: 6%;
+    }
+    
+    .journal-widget {
+        top: 18%;
+        width: 260px;
+    }
+    
+    .journal-widget .widget-content {
+        padding: 25px 20px;
+    }
+    
+    .journal-icon {
+        width: 85px;
+    }
+    
+    .gratitude-widget {
+        bottom: 80px;
+        right: 15px;
+        left: 15px;
+        width: auto;
+        max-width: 300px;
+        margin: 0 auto;
+        position: fixed;
+    }
+    
+    .widget-header {
+        padding: 12px 15px;
+    }
+    
+    .widget-title {
+        font-size: 0.9rem;
+    }
+    
+    .widget-subtitle {
+        font-size: 0.75rem;
+    }
+    
+    .widget-content {
+        padding: 15px;
+    }
+    
+    .gratitude-jar {
+        width: 70px;
+        height: 90px;
+    }
+    
+    .jar-body {
+        width: 55px;
+        height: 75px;
+    }
+    
+    .jar-lid {
+        width: 58px;
+        height: 12px;
+    }
+    
+    #gratitude-input {
+        font-size: 0.75rem;
+        padding: 6px 10px;
+    }
+    
+    #add-gratitude {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    
+    .widget-tip {
+        font-size: 0.65rem;
+    }
+    
+    .popup-content {
+        max-width: 250px;
+        padding: 20px;
+        margin: 0 20px;
     }
 }
